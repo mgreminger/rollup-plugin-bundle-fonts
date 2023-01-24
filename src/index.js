@@ -8,7 +8,7 @@ export default function bundleFonts(options = {}) {
   const filter = createFilter(options.include || ['**/*.css'], options.exclude);
   
   if (!options.fontDir) {
-    throw Error('Must provide fontDir property for the bundleFonts plugin.');
+    throw new Error('Must provide fontDir property for the bundleFonts plugin.');
   }
   
   const fontDir = options.fontDir;
@@ -46,16 +46,22 @@ export default function bundleFonts(options = {}) {
           uniqueFontUrls.add(url);
           const destFile = join(fontDir, basename(url));
 
-          transformedCode = transformedCode.replaceAll(search, `url("${destFile}")`);    
+          transformedCode = transformedCode.replaceAll(`"${url}"`, `"${destFile}"`);    
           
           promiseArray.push(downloadAndSave(url, destFile));
-
         }
       }
 
-      await Promise.all(promiseArray);
+      const statuses = await Promise.allSettled(promiseArray);
       
-      return {code: transformedCode, map: null}; // since code has been transformed, should be regenerating sourcemap 
+      const rejected = statuses.filter( item => item.status === 'rejected');
+
+      if (rejected.length > 0) {
+        // at least one download failed
+        throw new Error(rejected.reduce( (accum, current) => `${accum}, ${current}`, ''));
+      }
+
+      return {code: transformedCode, map: null}; // TODO: since code has been transformed, should be regenerating sourcemap 
     },
 
   };
@@ -68,16 +74,34 @@ async function downloadAndSave(url, destFile) {
   } catch (e) {
     if (e.code === "ENOENT") {
       // file does not exist so download and save
-      //console.log(`fetching: ${url}`);
       const response = await fetch(url);
-      
-      const fileStream = fs.createWriteStream(destFile);
-      
-      await new Promise((resolve, reject) => {
-        response.body.pipe(fileStream);
-        response.body.on("error", reject);
-        fileStream.on("finish", resolve);
-      });
+
+      if (!response.ok) {
+        throw new Error(`Unable to download font: ${url}`);
+      }
+
+      try {
+        const fileStream = fs.createWriteStream(destFile);
+        
+        await new Promise((resolve, reject) => {
+          response.body.pipe(fileStream);
+          response.body.on("error", reject);
+          fileStream.on("finish", resolve);
+        });
+      } catch (downloadError) {
+        // Make sure destFile is deleted, if it exists
+        // Cannot have partially downloaded font files around since they will not be re-downloaded
+        // if they already exist
+        try {
+          await fs.promises.rm(destFile);
+        } catch (deleteError) {
+          if (e.code !== "ENOENT") {
+            throw deleteError;
+          }
+        }
+
+        throw downloadError; //re-throw error so that run fails
+      }
 
     } else {
       throw e;
