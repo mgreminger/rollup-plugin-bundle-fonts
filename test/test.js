@@ -30,6 +30,7 @@ test.beforeEach( async t => {
 test.serial('Test run and re-run', async t => {
   const exampleFile = "test/example.css";
   const exampleFileTarget = "test/example_target.css";
+  const exampleTargetSourceMap = "test/example_map.json";
 
   const code = await fs.promises.readFile(exampleFile, 'utf8');
 
@@ -38,7 +39,10 @@ test.serial('Test run and re-run', async t => {
   const targetCode = await fs.promises.readFile(exampleFileTarget, 'utf8');
 
   t.is(result.code, targetCode);
-  t.not(result.map, null); // make sure source-map is updated
+
+  // check to make sure sourcemap matches expected result
+  const expectedSourceMap = await fs.promises.readFile(exampleTargetSourceMap, 'utf8');
+  t.is(JSON.stringify(result.map), expectedSourceMap);
 
   // make sure each file was downloaded and is of the correct size
   const mtimes = [];

@@ -2,6 +2,7 @@ import fs from 'fs';
 import { basename, join } from 'path';
 import { createFilter } from '@rollup/pluginutils';
 import fetch from 'node-fetch';
+import MagicString from 'magic-string';
 
 
 export default function bundleFonts(options = {}) {
@@ -28,13 +29,13 @@ export default function bundleFonts(options = {}) {
       }
 
       const search = /url\("(http[^"]*)"\)/g;  // important to only match absolute urls starting with http
-      const matches = code.matchAll(search);
+      const matches = [...code.matchAll(search)];
 
       if (matches.length === 0) {
         return {code: code, map: null}; 
       }
 
-      let transformedCode = code;
+      let transformedCode = new MagicString(code);
 
       const promiseArray = [];
       const uniqueFontUrls = new Set();
@@ -46,7 +47,7 @@ export default function bundleFonts(options = {}) {
           uniqueFontUrls.add(url);
           const destFile = join(fontDir, basename(url));
 
-          transformedCode = transformedCode.replaceAll(`"${url}"`, `"${destFile}"`);    
+          transformedCode.replaceAll(`"${url}"`, `"${destFile}"`);    
           
           promiseArray.push(downloadAndSave(url, destFile));
         }
@@ -61,7 +62,10 @@ export default function bundleFonts(options = {}) {
         throw new Error(rejected.reduce( (accum, current) => `${accum}, ${current}`, ''));
       }
 
-      return {code: transformedCode, map: null}; // TODO: since code has been transformed, should be regenerating sourcemap 
+      return {
+        code: transformedCode.toString(),
+        map: transformedCode.generateMap({source: id, hires: true})
+      }; 
     },
 
   };
