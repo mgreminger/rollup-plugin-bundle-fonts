@@ -1,9 +1,10 @@
 {
-  "name": "rollup-starter-plugin",
+  "name": "rollup-plugin-bundle-fonts",
+  "type": "module",
   "version": "1.0.0",
-  "description": "Rollup starter plugin",
-  "main": "dist/rollup-starter-plugin.cjs.js",
-  "module": "dist/rollup-starter-plugin.es.js",
+  "description": "Rollup plugin to download http fonts referenced in css files",
+  "main": "dist/rollup-plugin-bundle-fonts.cjs.js",
+  "module": "dist/rollup-bundle-fonts.es.js",
   "files": [
     "dist"
   ],
@@ -11,8 +12,8 @@
     "rollup",
     "rollup-plugin"
   ],
-  "homepage": "https://github.com/rollup/rollup-starter-plugin",
-  "author": "Kenji Okamoto",
+  "homepage": "https://github.com/mgreminger/rollup-plugin-bundle-fonts",
+  "author": "Michael Greminger",
   "license": "MIT",
   "repository": "rollup/rollup-starter-plugin",
   "bugs": {
@@ -21,13 +22,17 @@
   "scripts": {
     "prebuild": "rimraf -rf dist/*",
     "build": "rollup -c",
-    "test": "node test/test.js",
+    "test": "ava",
     "pretest": "npm run build"
   },
   "dependencies": {
-    "rollup-pluginutils": "^2.8.1"
+    "@rollup/pluginutils": "^5.0.2",
+    "node-fetch": "^3.3.0",
+    "source-map": "^0.7.4"
   },
   "devDependencies": {
+    "ava": "^5.1.1",
+    "expect": "^29.3.1",
     "rimraf": "^2.6.3",
     "rollup": "^1.16.2"
   }

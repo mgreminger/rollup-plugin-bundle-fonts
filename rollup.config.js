@@ -7,5 +7,5 @@ export default {
     { file: pkg.module, format: 'es' }
   ],
   plugins: [],
-  external: Object.keys({...pkg.dependencies, ...pkg.peerDependencies})
+  external: [...Object.keys({...pkg.dependencies, ...pkg.peerDependencies}), 'fs', 'path']
 };
