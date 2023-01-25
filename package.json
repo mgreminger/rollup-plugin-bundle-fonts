@@ -29,7 +29,8 @@
     "prebuild": "rimraf -rf dist/*",
     "build": "rollup -c",
     "test": "ava",
-    "pretest": "npm run build"
+    "pretest": "npm run build",
+    "prepack": "npm run build"
   },
   "dependencies": {
     "@rollup/pluginutils": "^5.0.2",
