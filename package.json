@@ -4,7 +4,13 @@
   "version": "1.0.0",
   "description": "Rollup plugin to download http fonts referenced in css files",
   "main": "dist/rollup-plugin-bundle-fonts.cjs.js",
-  "module": "dist/rollup-bundle-fonts.es.js",
+  "module": "dist/rollup-plugin-bundle-fonts.es.js",
+  "exports":{
+    ".":{
+      "default": "./dist/rollup-plugin-bundle-fonts.es.js",
+      "require": "./dist/rollup-plugin-bundle-fonts.cjs.js"
+    }
+  },
   "files": [
     "dist"
   ],
@@ -34,6 +40,6 @@
     "ava": "^5.1.1",
     "expect": "^29.3.1",
     "rimraf": "^2.6.3",
-    "rollup": "^1.16.2"
+    "rollup": "^3.10.1"
   }
 }

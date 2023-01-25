@@ -8,11 +8,12 @@ import MagicString from 'magic-string';
 export default function bundleFonts(options = {}) {
   const filter = createFilter(options.include || ['**/*.css'], options.exclude);
   
-  if (!options.fontDir) {
-    throw new Error('Must provide fontDir property for the bundleFonts plugin.');
+  if (!options.cssRelativePath || !options.targetDir) {
+    throw new Error('Must provide targetDir and cssRelativePath config properties for the bundleFonts plugin in your rollup config file.');
   }
   
-  const fontDir = options.fontDir;
+  const targetDir = options.targetDir;
+  const cssRelativePath = options.cssRelativePath;
 
   return {
     name: 'bundleFonts',
@@ -40,14 +41,15 @@ export default function bundleFonts(options = {}) {
       const promiseArray = [];
       const uniqueFontUrls = new Set();
 
-      await createDestDirectory(fontDir);
+      await createDestDirectory(targetDir);
 
       for (const [match, url] of matches) {
         if (!uniqueFontUrls.has(url)) {
           uniqueFontUrls.add(url);
-          const destFile = join(fontDir, basename(url));
+          const destFile = join(targetDir, basename(url));
+          const relFontPath = join(cssRelativePath, basename(url));
 
-          transformedCode.replaceAll(`"${url}"`, `"${destFile}"`);    
+          transformedCode.replaceAll(`"${url}"`, `"${relFontPath}"`);    
           
           promiseArray.push(downloadAndSave(url, destFile));
         }
