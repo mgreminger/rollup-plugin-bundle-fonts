@@ -3,8 +3,8 @@ import { join } from 'path';
 import test from 'ava';
 import bundleFonts from "../dist/rollup-plugin-bundle-fonts.es.js";
 
-const targetDir = "public/assets/fonts";
-const cssRelativePath = "assets/fonts";
+const fontTargetDir = "public/assets/fonts";
+const cssBundleDir = "public";
 
 
 const testFonts = [
@@ -18,7 +18,7 @@ test.beforeEach( async t => {
   // delete any fonts downloaded in a previous run
   for( const { name } of testFonts) {
     try {
-      await fs.promises.rm(join(targetDir, name));
+      await fs.promises.rm(join(fontTargetDir, name));
     } catch (e) {
       if (e.code !== "ENOENT") {
         throw e;
@@ -36,7 +36,7 @@ test.serial('Test run and re-run', async t => {
 
   const code = await fs.promises.readFile(exampleFile, 'utf8');
 
-  let result = await bundleFonts({ targetDir: targetDir, cssRelativePath: cssRelativePath }).transform(code, exampleFile);
+  let result = await bundleFonts({ fontTargetDir: fontTargetDir, cssBundleDir: cssBundleDir }).transform(code, exampleFile);
 
   const targetCode = await fs.promises.readFile(exampleFileTarget, 'utf8');
 
@@ -49,19 +49,19 @@ test.serial('Test run and re-run', async t => {
   // make sure each file was downloaded and is of the correct size
   const mtimes = [];
   for ( const { name, size } of testFonts) {
-    const stat = await fs.promises.stat(join(targetDir, name));
+    const stat = await fs.promises.stat(join(fontTargetDir, name));
     t.is(stat.size, size);
     mtimes.push(stat.mtime);
   }
 
   // run plugin again on same input and make sure mtimes don't change
-  result = await bundleFonts({ targetDir: targetDir, cssRelativePath: cssRelativePath }).transform(code, exampleFile);
+  result = await bundleFonts({ fontTargetDir: fontTargetDir, cssBundleDir: cssBundleDir }).transform(code, exampleFile);
 
   t.is(result.code, targetCode);
   t.not(result.map, null);
 
   for (const [i, {name, size}] of testFonts.entries()) {
-    const stat = await fs.promises.stat(join(targetDir, name));
+    const stat = await fs.promises.stat(join(fontTargetDir, name));
     t.is(stat.size, size)
     t.deepEqual(stat.mtime, mtimes[i]);
   }
@@ -74,7 +74,7 @@ test.serial('Test run with no fonts to download', async t => {
 
   const code = await fs.promises.readFile(exampleFile, 'utf8');
 
-  const result = await bundleFonts({ targetDir: targetDir, cssRelativePath: cssRelativePath}).transform(code, exampleFile);
+  const result = await bundleFonts({ fontTargetDir: fontTargetDir, cssBundleDir: cssBundleDir}).transform(code, exampleFile);
 
   // make sure input is unchanged
   t.is(result.code, code);
@@ -83,7 +83,7 @@ test.serial('Test run with no fonts to download', async t => {
   t.is(result.map, null);
 
   // make sure font directory is empty
-  const files = await fs.promises.readdir(targetDir);
+  const files = await fs.promises.readdir(fontTargetDir);
 
   t.is(files.length, 0);
 
@@ -96,16 +96,16 @@ test.serial('Test bad font link', async t => {
 
   const code = await fs.promises.readFile(exampleFile, 'utf8');
 
-  await t.throwsAsync(bundleFonts({ targetDir: targetDir, cssRelativePath: cssRelativePath}).transform(code, exampleFile));
+  await t.throwsAsync(bundleFonts({ fontTargetDir: fontTargetDir, cssBundleDir: cssBundleDir}).transform(code, exampleFile));
 
   // Make sure file doesn't exist for bad the link
   // Also, make sure that any good links were downloaded in their entirety so that
   // corrupt font files don' impact future runs
   for ( const { name, size, badLink, badLinkName } of testFonts) {
     if (badLink) {
-      await t.throwsAsync(fs.promises.stat(join(targetDir, badLinkName)));
+      await t.throwsAsync(fs.promises.stat(join(fontTargetDir, badLinkName)));
     } else {
-      const stat = await fs.promises.stat(join(targetDir, name));
+      const stat = await fs.promises.stat(join(fontTargetDir, name));
       t.is(stat.size, size);
     }
   }

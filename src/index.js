@@ -1,5 +1,5 @@
 import fs from 'fs';
-import { basename, join } from 'path';
+import { basename, join, relative } from 'path';
 import { createFilter } from '@rollup/pluginutils';
 import fetch from 'node-fetch';
 import MagicString from 'magic-string';
@@ -8,12 +8,12 @@ import MagicString from 'magic-string';
 export default function bundleFonts(options = {}) {
   const filter = createFilter(options.include || ['**/*.css'], options.exclude);
   
-  if (!options.cssRelativePath || !options.targetDir) {
-    throw new Error('Must provide targetDir and cssRelativePath config properties for the bundleFonts plugin in your rollup config file.');
+  if (!options.cssBundleDir || !options.fontTargetDir) {
+    throw new Error('Must provide fontTargetDir and cssBundleDir config properties for the bundleFonts plugin in your rollup config file.');
   }
   
-  const targetDir = options.targetDir;
-  const cssRelativePath = options.cssRelativePath;
+  const fontTargetDir = options.fontTargetDir;
+  const cssBundleDir = options.cssBundleDir;
 
   return {
     name: 'bundleFonts',
@@ -41,13 +41,13 @@ export default function bundleFonts(options = {}) {
       const promiseArray = [];
       const uniqueFontUrls = new Set();
 
-      await createDestDirectory(targetDir);
+      await createDestDirectory(fontTargetDir);
 
       for (const [match, url] of matches) {
         if (!uniqueFontUrls.has(url)) {
           uniqueFontUrls.add(url);
-          const destFile = join(targetDir, basename(url));
-          const relFontPath = join(cssRelativePath, basename(url));
+          const destFile = join(fontTargetDir, basename(url));
+          const relFontPath = join(relative(cssBundleDir, fontTargetDir), basename(url));
 
           transformedCode.replaceAll(`"${url}"`, `"${relFontPath}"`);    
           
