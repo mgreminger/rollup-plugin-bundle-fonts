@@ -65,7 +65,7 @@ export default function bundleFonts(options = {}) {
 
       if (rejected.length > 0) {
         // at least one download failed
-        throw new Error(rejected.reduce( (accum, current) => `${accum}, ${current}`, ''));
+        throw new Error(rejected.reduce( (accum, current) => `${accum}, ${current.reason}`, ''));
       }
 
       return {
