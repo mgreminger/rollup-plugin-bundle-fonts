@@ -21,16 +21,15 @@
   "homepage": "https://github.com/mgreminger/rollup-plugin-bundle-fonts",
   "author": "Michael Greminger",
   "license": "MIT",
-  "repository": "rollup/rollup-starter-plugin",
+  "repository": "https://github.com/mgreminger/rollup-plugin-bundle-fonts",
   "bugs": {
-    "url": "https://github.com/rollup/rollup-starter-plugin/issues"
+    "url": "https://github.com/mgreminger/rollup-plugin-bundle-fonts/issues"
   },
   "scripts": {
     "prebuild": "rimraf -rf dist/*",
     "build": "rollup -c",
     "test": "ava",
-    "pretest": "npm run build",
-    "prepack": "npm run build"
+    "pretest": "npm run build"
   },
   "dependencies": {
     "@rollup/pluginutils": "^5.0.2",
