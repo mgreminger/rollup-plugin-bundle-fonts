@@ -3,7 +3,7 @@
   font-family: "IBM Plex Mono";
   font-style: normal;
   font-weight: 700;
-  src: local("IBM Plex Mono Bold"), local("IBMPlexMono-Bold"), url("https://1.www.s81c.com/common/carbon/plex/fonts/IBM-Plex-Mono/fonts/complete/woff2/IBMPlexMono-Bold.woff2") format("woff2"), url("https://1.www.s81c.com/common/carbon/plex/fonts/IBM-Plex-Mono/fonts/complete/woff/IBMPlexMono-Bold.woff") format("woff")
+  src: local("IBM Plex Mono Bold"), local("IBMPlexMono-Bold"), url("https://1.www.s81c.com/common/carbon/plex/fonts/IBM-Plex-Mono/fonts/complete/woff2/IBMPlexMono-Bold.woff2") format("woff2"), url("assets/fonts/IBMPlexMono-Bold.woff") format("woff")
 }
 
 @font-face {

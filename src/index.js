@@ -1,5 +1,5 @@
 import fs from 'fs';
-import { basename, join, relative } from 'path';
+import { basename, join, relative, extname } from 'path';
 import { createFilter } from '@rollup/pluginutils';
 import fetch from 'node-fetch';
 import MagicString from 'magic-string';
@@ -8,6 +8,8 @@ import MagicString from 'magic-string';
 export default function bundleFonts(options = {}) {
   const filter = createFilter(options.include || ['**/*.css'], options.exclude);
   
+  const fontExtensions = options.fontExtensions || ['.woff', '.woff2', '.ttf'];
+
   if (!options.cssBundleDir || !options.fontTargetDir) {
     throw new Error('Must provide fontTargetDir and cssBundleDir config properties for the bundleFonts plugin in your rollup config file.');
   }
@@ -30,7 +32,9 @@ export default function bundleFonts(options = {}) {
       }
 
       const search = /url\("(http[^"]*)"\)/g;  // important to only match absolute urls starting with http
-      const matches = [...code.matchAll(search)];
+      let matches = [...code.matchAll(search)];
+
+      matches = matches.filter( ([match, url]) => fontExtensions.includes(extname(url)) );
 
       if (matches.length === 0) {
         return {code: code, map: null}; 

@@ -111,3 +111,22 @@ test.serial('Test bad font link', async t => {
   }
 
 });
+
+
+test.serial('Test run with custom font file extension', async t => {
+  const exampleFile = "test/example.css";
+  const exampleFileTarget = "test/example_target_custom_extensions.css";
+
+  const code = await fs.promises.readFile(exampleFile, 'utf8');
+
+  const result = await bundleFonts({
+    fontTargetDir: fontTargetDir,
+    cssBundleDir: cssBundleDir,
+    fontExtensions: [".woff", ".ttf"]
+  }).transform(code, exampleFile);
+
+  const targetCode = await fs.promises.readFile(exampleFileTarget, 'utf8');
+
+  t.is(result.code, targetCode);
+
+});
