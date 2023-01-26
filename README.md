@@ -1,25 +1,80 @@
-# rollup-starter-plugin
+# rollup-plugin-bundle-fonts
 
-This repo contains bare-bones code for creating a [Rollup plugin](https://rollupjs.org/guide/en/#plugins).
+🍣 A Rollup plugin that downloads https fonts in your css files that are included by the url() function and places them in the specified target directory. The url() functions are then updated 
+with relative url's that point to the target directory.
 
-## Getting started
+## Requirements
 
-Clone this repository and install its dependencies:
+This plugin requires an [LTS](https://github.com/nodejs/Release) Node version (v16.0.0+) and Rollup v3.0.0+.
 
-```bash
-npx degit https://github.com/rollup/rollup-starter-plugin my-plugin
-cd my-plugin
-npm install
+## Install
+
+Using npm:
+
+```console
+npm install rollup-plugin-bundle-fonts --save-dev
 ```
 
-1. Edit `package.json`
+## Usage
 
-2. Edit `src/index.js`
+Create a `rollup.config.js` [configuration file](https://www.rollupjs.org/guide/en/#configuration-files) and import the plugin. The example below will place fonts in the `dist/fonts`
+folder relative to the project directory:
 
-- rename the `starterPlugin` function
-- change `name: 'starter-plugin'` to your plugin name
-- implement or delete the function stubs. See [hooks guide](https://rollupjs.org/guide/en#hooks)
+```js
+import bundleFonts from 'rollup-plugin-bundle-fonts';
 
-3. Add your preferred test framework and implement tests
+export default {
+  input: 'src/index.ts',
+  output: {
+    file: 'dist/bundle.js',
+    format: 'es'
+  },
+  plugins: [
+    bundleFonts({
+      fontTargetDir: ['dist/fonts'],
+      cssBundleDir: ['dist']
+    })
+  ]
+};
+```
 
-See [conventions](https://rollupjs.org/guide/en/#conventions) for writing Rollup plugins.
+Then call `rollup` either via the [CLI](https://www.rollupjs.org/guide/en/#command-line-reference) or the [API](https://www.rollupjs.org/guide/en/#javascript-api).
+
+## Options
+
+### `fontTargetDir`
+Type: `string`
+Default: none, this is a required option
+
+This is the directory where all of the fonts will be downloaded to.
+
+### `cssBundleDir`
+Type: `string`
+Default: none, this is a required option
+
+Since css `url()` function calls are relative to the css file rather than the site root directory, 
+it is necessary to provide the path where the bundled css file will be located. This plugin
+will automatically update the `url()` calls to have a relative path from the css file directory
+to the font directory.
+
+### `fontExtensions`
+Type: `string[]`
+Default: `['.woff', '.woff2', '.ttf']`
+
+### `exclude`
+
+Type: `string` | `string[]`
+Default: `null`
+
+A [picomatch pattern](https://github.com/micromatch/picomatch), or array of patterns, which specifies the files in the build the plugin should _ignore_. By default no files are ignored.
+
+### `include`
+
+Type: `string` | `string[]`
+Default: `['**/*.css']`
+
+A [picomatch pattern](https://github.com/micromatch/picomatch), or array of patterns, which specifies the files in the build the plugin should operate on. By default only .css files are targeted.
+
+## Meta
+
+[LICENSE (MIT)](/LICENSE)
