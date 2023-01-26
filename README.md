@@ -1,7 +1,9 @@
 # rollup-plugin-bundle-fonts
 
-🍣 A Rollup plugin that downloads https fonts in your css files that are included by the url() function and places them in the specified target directory. The url() functions are then updated 
+🍣 A Rollup plugin that downloads https fonts referenced by url() functions in your css files and places them in a specified target directory. The url() functions are then updated 
 with relative url's that point to the target directory.
+
+The font directory is not cleared between runs. The plugin will only download fonts if they don't already exist in the target folder.
 
 ## Requirements
 
@@ -42,28 +44,30 @@ Then call `rollup` either via the [CLI](https://www.rollupjs.org/guide/en/#comma
 
 ## Options
 
-### `fontTargetDir`
+### `fontTargetDir` (required)
 Type: `string`
-Default: none, this is a required option
 
 This is the directory where all of the fonts will be downloaded to.
 
-### `cssBundleDir`
+### `cssBundleDir` (required)
 Type: `string`
-Default: none, this is a required option
 
-Since css `url()` function calls are relative to the css file rather than the site root directory, 
-it is necessary to provide the path where the bundled css file will be located. This plugin
-will automatically update the `url()` calls to have a relative path from the css file directory
+This options tells this plugin where the final bundled css file will be located.
+Since css `url()` function calls are relative to the
+css file rather than the site root directory, 
+this directory is required so that the plugin
+can automatically update the `url()` calls to have a relative path from the css file directory
 to the font directory.
 
 ### `fontExtensions`
 Type: `string[]`
+
 Default: `['.woff', '.woff2', '.ttf']`
 
 ### `exclude`
 
 Type: `string` | `string[]`
+
 Default: `null`
 
 A [picomatch pattern](https://github.com/micromatch/picomatch), or array of patterns, which specifies the files in the build the plugin should _ignore_. By default no files are ignored.
@@ -71,9 +75,10 @@ A [picomatch pattern](https://github.com/micromatch/picomatch), or array of patt
 ### `include`
 
 Type: `string` | `string[]`
+
 Default: `['**/*.css']`
 
-A [picomatch pattern](https://github.com/micromatch/picomatch), or array of patterns, which specifies the files in the build the plugin should operate on. By default only .css files are targeted.
+A [picomatch pattern](https://github.com/micromatch/picomatch), or array of patterns, which specifies the files in the build the plugin should operate on. By default only `.css` files are targeted.
 
 ## Meta
 
