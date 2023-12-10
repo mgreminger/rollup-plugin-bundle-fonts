@@ -1,12 +1,12 @@
 {
   "name": "rollup-plugin-bundle-fonts",
   "type": "module",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "Rollup plugin to download http fonts referenced in css files",
   "main": "dist/rollup-plugin-bundle-fonts.cjs.js",
   "module": "dist/rollup-plugin-bundle-fonts.es.js",
-  "exports":{
-    ".":{
+  "exports": {
+    ".": {
       "default": "./dist/rollup-plugin-bundle-fonts.es.js",
       "require": "./dist/rollup-plugin-bundle-fonts.cjs.js"
     }
