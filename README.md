@@ -33,8 +33,8 @@ export default {
   },
   plugins: [
     bundleFonts({
-      fontTargetDir: ['dist/fonts'],
-      cssBundleDir: ['dist']
+      fontTargetDir: 'dist/fonts',
+      cssBundleDir: 'dist'
     })
   ]
 };
