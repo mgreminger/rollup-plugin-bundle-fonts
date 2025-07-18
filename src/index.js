@@ -10,6 +10,8 @@ export default function bundleFonts(options = {}) {
   
   const fontExtensions = options.fontExtensions || ['.woff', '.woff2', '.ttf'];
 
+  const delay = options.delay || 0;
+
   if (!options.cssBundleDir || !options.fontTargetDir) {
     throw new Error('Must provide fontTargetDir and cssBundleDir config properties for the bundleFonts plugin in your rollup config file.');
   }
@@ -56,6 +58,9 @@ export default function bundleFonts(options = {}) {
           transformedCode.replaceAll(`"${url}"`, `"${relFontPath}"`);    
           
           promiseArray.push(downloadAndSave(url, destFile));
+          if (delay > 0) {
+            await new Promise((resolve) => setTimeout(resolve, delay));
+          }
         }
       }
 

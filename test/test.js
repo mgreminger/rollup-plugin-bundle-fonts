@@ -8,9 +8,9 @@ const cssBundleDir = "public";
 
 
 const testFonts = [
-  {name: "IBMPlexMono-Bold-Cyrillic.woff2", size: 12548, badLink: false, badLinkName: null},
-  {name: "IBMPlexMono-Bold.woff", size: 58408, badLink: true, badLinkName: "IBMPlexMono-Bold-z.woff"},
-  {name: "IBMPlexMono-Bold.woff2", size: 40688, badLink: false, badLinkName: null},
+  {name: "IBMPlexMono-Bold-Cyrillic.woff2", size: 16476, badLink: false, badLinkName: null},
+  {name: "IBMPlexMono-Bold.woff", size: 63492, badLink: true, badLinkName: "IBMPlexMono-Bold-z.woff"},
+  {name: "IBMPlexMono-Bold.woff2", size: 46684, badLink: false, badLinkName: null},
 ]
 
 
@@ -129,4 +129,37 @@ test.serial('Test run with custom font file extension', async t => {
 
   t.is(result.code, targetCode);
 
+});
+
+
+test.serial('Test run with long delay', async t => {
+  t.timeout(30000)
+
+  const exampleFile = "test/example.css";
+  const exampleFileTarget = "test/example_target.css";
+
+  const code = await fs.promises.readFile(exampleFile, 'utf8');
+
+  const start = Date.now();
+  
+  const result = await bundleFonts({
+    fontTargetDir: fontTargetDir,
+    cssBundleDir: cssBundleDir,
+    delay: 5000
+  }).transform(code, exampleFile);
+
+  const duration = Date.now() - start;
+
+  t.true(duration > 10000);
+
+  const targetCode = await fs.promises.readFile(exampleFileTarget, 'utf8');
+  t.is(result.code, targetCode);
+
+  // make sure each file was downloaded and is of the correct size
+  const mtimes = [];
+  for ( const { name, size } of testFonts) {
+    const stat = await fs.promises.stat(join(fontTargetDir, name));
+    t.is(stat.size, size);
+    mtimes.push(stat.mtime);
+  }
 });
