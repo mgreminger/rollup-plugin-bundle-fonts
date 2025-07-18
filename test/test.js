@@ -8,9 +8,9 @@ const cssBundleDir = "public";
 
 
 const testFonts = [
-  {name: "IBMPlexMono-Bold-Cyrillic.woff2", size: 12548, badLink: false, badLinkName: null},
-  {name: "IBMPlexMono-Bold.woff", size: 58408, badLink: true, badLinkName: "IBMPlexMono-Bold-z.woff"},
-  {name: "IBMPlexMono-Bold.woff2", size: 40688, badLink: false, badLinkName: null},
+  {name: "IBMPlexMono-Bold-Cyrillic.woff2", size: 16476, badLink: false, badLinkName: null},
+  {name: "IBMPlexMono-Bold.woff", size: 63492, badLink: true, badLinkName: "IBMPlexMono-Bold-z.woff"},
+  {name: "IBMPlexMono-Bold.woff2", size: 46684, badLink: false, badLinkName: null},
 ]
 
 
