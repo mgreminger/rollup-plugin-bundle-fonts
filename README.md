@@ -80,6 +80,14 @@ Default: `['**/*.css']`
 
 A [picomatch pattern](https://github.com/micromatch/picomatch), or array of patterns, which specifies the files in the build the plugin should operate on. By default only `.css` files are targeted.
 
+### `delay`
+
+Type: `number`
+
+Default: `0`
+
+Delay in microseconds between each fetch call when downloading multiple fonts.
+
 ## Meta
 
 [LICENSE (MIT)](/LICENSE)
