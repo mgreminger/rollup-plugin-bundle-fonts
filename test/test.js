@@ -140,15 +140,15 @@ test.serial('Test run with long delay', async t => {
 
   const code = await fs.promises.readFile(exampleFile, 'utf8');
 
-  const start = Date.now();
+  let start = Date.now();
   
-  const result = await bundleFonts({
+  let result = await bundleFonts({
     fontTargetDir: fontTargetDir,
     cssBundleDir: cssBundleDir,
     delay: 5000
   }).transform(code, exampleFile);
 
-  const duration = Date.now() - start;
+  let duration = Date.now() - start;
 
   t.true(duration > 10000);
 
@@ -162,4 +162,17 @@ test.serial('Test run with long delay', async t => {
     t.is(stat.size, size);
     mtimes.push(stat.mtime);
   }
+
+  // run again, there should not be delays since the files are alrady downloaded
+  start = Date.now();
+  
+  result = await bundleFonts({
+    fontTargetDir: fontTargetDir,
+    cssBundleDir: cssBundleDir,
+    delay: 5000
+  }).transform(code, exampleFile);
+
+  duration = Date.now() - start;
+
+  t.true(duration < 1000);
 });
