@@ -1,5 +1,5 @@
 import fs from 'fs';
-import { basename, join, relative, extname } from 'path';
+import { basename, join, posix, relative, extname } from 'path';
 import { createFilter } from '@rollup/pluginutils';
 import fetch from 'node-fetch';
 import MagicString from 'magic-string';
@@ -53,7 +53,7 @@ export default function bundleFonts(options = {}) {
         if (!uniqueFontUrls.has(url)) {
           uniqueFontUrls.add(url);
           const destFile = join(fontTargetDir, basename(url));
-          const relFontPath = join(relative(cssBundleDir, fontTargetDir), basename(url));
+          const relFontPath = posix.join(posix.relative(cssBundleDir, fontTargetDir), basename(url));
 
           transformedCode.replaceAll(`"${url}"`, `"${relFontPath}"`);    
           
